@@ -65,7 +65,7 @@ Enter password for user: 40202f0023272a419158a692023272a00a0287083
 Invalid login information.
 ```
 
-The address of the user can be found at the seventh 4-byte value on the stack. We confirm this by using ```%7$x``` as an input:
+The address of ```user``` can be found at the seventh 4-byte value on the stack. We confirm this by using ```%7$x``` as an input:
 ```
 $ python2 -c 'print "%7$x"' | ./logmein
 user = 0xdb32a0
