@@ -38,3 +38,13 @@ int main(void) {
 	return 0;
 }
 ```
+To capture the flag, we need to change the value of ```admin``` which is stored on the stack. Thankfully, ```scanf()``` does not check for the size of the input, so we can just overflow the buffer, which is also stored on the stack, using a string longer than 32 characters.
+
+**Solution**
+```
+./bof1 
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+```
+
+**Flag**
+flag{my_first_buffer_overflow!}
