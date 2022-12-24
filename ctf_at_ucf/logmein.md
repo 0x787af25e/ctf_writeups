@@ -46,7 +46,7 @@ This means that the first 4 bytes of the buffer are empty (from ```calloc()```),
 ### The exploit 
 A good explanation of the string formatting vulnerability can be found [here](https://www.youtube.com/watch?v=2HxyGWD1htg). Simply put, format specifiers in ```printf()``` can be used to read values on the stack, and write to values elsewhere.
 
-I played around with the ```%x``` format specifier, which prints out the values on the stacks, to get things started with. After some experimentation, a few values on the stack were printed out. 
+I played around with the ```%x``` format specifier, which prints out the values on the stack, to get things started with. After some experimentation, a few values on the stack were printed out. 
 
 ```
 $ python2 -c 'print "%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x"' | ./logmein
