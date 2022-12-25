@@ -1,6 +1,4 @@
-# stack0 pt1
-
-## Read the contents of flag1.txt.
+# bof3
 
 Both a binary and a C source file were given.
 
