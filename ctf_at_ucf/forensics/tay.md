@@ -7,4 +7,6 @@ We first use the ```strings``` utility to inspect ASCII strings that the image h
 This appears to be in the base64 format. 
 
 **Flag**
-```flag{buffers_and_beef_make_for_a_yummie_pwn_steak}```
+```
+flag{buffers_and_beef_make_for_a_yummie_pwn_steak}
+```
