@@ -74,7 +74,7 @@ Enter password for user: db32a0
 Invalid login information.
 ```
 
-Now, the only thing left is to write to this value. This can be done by using the ```%n``` specifier. The (hexadecimal) value to the left of the specifier is written to the address specified.
+Now, the only thing left is to write to this memory address for the flag to be shown. This can be done by using the ```%n``` specifier. The (hexadecimal) value to the left of the specifier is written to the address specified.
 
 **Solution**
 ```
